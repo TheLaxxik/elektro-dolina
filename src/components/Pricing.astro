@@ -1,0 +1,64 @@
+---
+import { prices } from '../data/site';
+---
+
+<section id="cennik" class="section">
+  <div class="wrap pricing">
+    <div>
+      <h2>Orientačný cenník</h2>
+      <p>Ukážkové ceny. Konečnú cenu vždy určí obhliadka a dostanete ju písomne.</p>
+    </div>
+    <table>
+      <caption class="sr-only">Orientačný cenník</caption>
+      <tbody>
+        {
+          prices.map((p) => (
+            <tr>
+              <th scope="row">{p.item}</th>
+              <td>{p.price}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<style>
+  .pricing {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: 3.5rem;
+    align-items: start;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th,
+  td {
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: baseline;
+  }
+  tr:first-child th,
+  tr:first-child td {
+    border-top: 1px solid var(--line);
+  }
+  th {
+    font-weight: 400;
+    text-align: left;
+  }
+  td {
+    padding-left: 1rem;
+    text-align: right;
+    white-space: nowrap;
+    font: 700 1.2rem/1.2 var(--head);
+  }
+  @media (max-width: 820px) {
+    .pricing {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+  }
+</style>

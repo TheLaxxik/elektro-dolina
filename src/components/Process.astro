@@ -1,0 +1,89 @@
+---
+import { steps } from '../data/site';
+---
+
+<section id="postup" class="section">
+  <div class="wrap">
+    <h2>Ako to prebieha</h2>
+    <!-- číslovanie je na mieste, lebo kroky sú skutočná postupnosť -->
+    <ol class="steps">
+      {
+        steps.map((s) => (
+          <li>
+            <strong>{s.title}</strong>
+            <span>{s.text}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .steps {
+    --gap: 2rem;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--gap);
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+  li {
+    position: relative;
+    padding-top: 3.4rem;
+    counter-increment: step;
+  }
+  /* kruh s číslom a čiara k ďalšiemu kroku, ako vodič medzi svorkami */
+  li::before {
+    content: counter(step);
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background: var(--signal);
+    color: var(--signal-ink);
+    font: 700 1.2rem/1 var(--head);
+  }
+  li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 1.15rem;
+    left: 3rem;
+    right: calc(var(--gap) * -1 + 0.6rem);
+    height: 2px;
+    background: var(--line);
+  }
+  strong {
+    display: block;
+    margin-bottom: 0.35rem;
+    font: 700 1.25rem/1.2 var(--head);
+  }
+  span {
+    color: var(--muted);
+    font-size: 0.98rem;
+  }
+
+  @media (max-width: 820px) {
+    .steps {
+      --gap: 1.75rem;
+      grid-template-columns: minmax(0, 1fr);
+    }
+    li {
+      padding: 0.15rem 0 0 3.6rem;
+    }
+    li:not(:last-child)::after {
+      top: 2.9rem;
+      bottom: calc(var(--gap) * -1 + 0.5rem);
+      left: 1.15rem;
+      right: auto;
+      width: 2px;
+      height: auto;
+    }
+  }
+</style>

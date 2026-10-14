@@ -1,0 +1,19 @@
+/* Plynulý scroll pri odkazoch na sekcie (napr. "Pozrieť cenník"). */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Plynulé prepnutie režimu. Trieda theme-anim sa nasadí len na chvíľu
+   pri kliku (theme.ts), aby sa farby neanimovali pri načítaní stránky ani
+   pri iných zmenách. Animujú sa len farby, rozvádzač si svoje fixné farby drží. */
+.theme-anim,
+.theme-anim *,
+.theme-anim *::before,
+.theme-anim *::after {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease !important;
+}

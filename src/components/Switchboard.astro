@@ -1,0 +1,296 @@
+---
+import { services } from '../data/site';
+---
+
+<div class="board" data-switchboard>
+  <div class="enclosure">
+    <div class="inner">
+      <div class="duct" aria-hidden="true"></div>
+      <div class="mods" role="group" aria-label="Rozvádzač: vyberte službu">
+        <!-- prúdový chránič: len dekorácia, vždy zapnutý -->
+        <div class="slot slot--rcd" aria-hidden="true">
+          <div class="wires"><span class="wire" style="background:#6b3f22"></span><span class="wire" style="background:#2a62b0"></span></div>
+          <div class="mcb mcb--rcd">
+            <span class="sw"><span class="lever"></span></span>
+            <span class="rate">30 mA</span>
+            <span class="test"></span>
+          </div>
+          <span class="tag">Chránič</span>
+        </div>
+
+        {
+          services.map((s, i) => (
+            <div class="slot">
+              <div class="wires"><span class="wire" style={`background:${s.wire}`}></span></div>
+              <button
+                type="button"
+                class="mcb"
+                data-index={i}
+                aria-pressed={i === 0 ? 'true' : 'false'}
+                aria-controls={`sluzba-${s.id}`}
+                aria-label={s.title}
+              >
+                <span class="sw"><span class="lever"></span></span>
+                <span class="rate">{s.rating}</span>
+                <span class="ind"></span>
+              </button>
+              <span class="tag">{s.label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <p class="hint">Zapnite istič a uvidíte, čo robíme.</p>
+
+  <div class="plate" aria-live="polite">
+    {
+      services.map((s, i) => (
+        <article id={`sluzba-${s.id}`} data-panel hidden={i !== 0}>
+          <h3>{s.title}</h3>
+          <p>{s.text}</p>
+          <p class="note">{s.note}</p>
+        </article>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  import '../scripts/switchboard';
+</script>
+
+<style>
+  /* Rozvádzač je fyzický predmet, preto má fixné farby aj v tmavom režime. */
+  .board {
+    --wire-h: 22px;
+    --mcb-h: 118px;
+  }
+
+  .enclosure {
+    padding: 10px;
+    border: 1px solid #262e34;
+    border-radius: 10px;
+    background: #3b444b;
+  }
+  .inner {
+    padding: 0 0.75rem 0.85rem;
+    border-radius: 5px;
+    background: #b7bdc2;
+    overflow: hidden;
+  }
+  /* plastový kanál, do ktorého vodiče vchádzajú */
+  .duct {
+    height: 26px;
+    margin: 0 -0.75rem;
+    border-bottom: 2px solid #6c757b;
+    background: repeating-linear-gradient(90deg, #8c949a 0 14px, #7b848a 14px 16px);
+  }
+
+  .mods {
+    position: relative;
+    display: grid;
+    grid-template-columns: 2fr repeat(5, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+  /* DIN lišta, na ktorej sedia ističe */
+  .mods::before {
+    content: '';
+    position: absolute;
+    left: -0.75rem;
+    right: -0.75rem;
+    top: calc(var(--wire-h) + var(--mcb-h) / 2 - 9px);
+    height: 18px;
+    background: linear-gradient(#a9b0b5, #7d868c 55%, #959da2);
+    border-block: 1px solid #6a737a;
+  }
+
+  .slot {
+    position: relative;
+    min-width: 0;
+  }
+  .wires {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    height: var(--wire-h);
+  }
+  .wire {
+    width: 5px;
+    height: 100%;
+    border-radius: 0 0 1px 1px;
+  }
+
+  .mcb {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: min(100%, 56px);
+    height: var(--mcb-h);
+    margin-inline: auto;
+    padding: 8px 5px;
+    border: 1px solid #8a9298;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #e1e4e6, #f4f5f6 30%, #f4f5f6 70%, #d9dcdf);
+    color: #2c353b;
+    font: 600 0.62rem/1 var(--body);
+    appearance: none;
+  }
+  .mcb--rcd {
+    width: min(100%, 116px);
+  }
+  button.mcb {
+    cursor: pointer;
+  }
+  button.mcb:hover {
+    border-color: #566066;
+  }
+  button.mcb:focus-visible {
+    outline: 3px solid #0b3a7a;
+    outline-offset: 3px;
+  }
+
+  /* svorky hore a dole */
+  .mcb::before,
+  .mcb::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border: 1px solid #79828a;
+    border-radius: 50%;
+    background:
+      linear-gradient(#444c52, #444c52) center / 7px 2px no-repeat,
+      linear-gradient(135deg, #c9ced2, #8b939a);
+  }
+
+  .sw {
+    position: relative;
+    width: 70%;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: #263037;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
+  }
+  .lever {
+    position: absolute;
+    left: 10%;
+    right: 10%;
+    top: 40%;
+    height: 55%;
+    border-radius: 2px;
+    background: linear-gradient(#eef0f1, #bfc4c8);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+    transition: top 0.14s ease-out;
+  }
+  .mcb[aria-pressed='true'] .lever,
+  .mcb--rcd .lever {
+    top: 5%;
+  }
+
+  .rate {
+    letter-spacing: 0.02em;
+  }
+  .ind {
+    width: 60%;
+    height: 6px;
+    border-radius: 1px;
+    background: #a9afb3;
+  }
+  .mcb[aria-pressed='true'] .ind {
+    background: #2f9e4f;
+  }
+  .test {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #2d6cc0;
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  /* štítok pod ističom, aktívny sa zvýrazní */
+  .tag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.7em;
+    margin-top: 8px;
+    padding: 0.3rem 0.15rem;
+    border: 1px solid #aeb4b8;
+    background: #f7f8f8;
+    color: #111c26;
+    font: 600 0.68rem/1.15 var(--body);
+    text-align: center;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+  .mcb[aria-pressed='true'] + .tag {
+    background: var(--signal);
+    border-color: #b99700;
+  }
+
+  .hint {
+    margin: 0.9rem 0 1rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  /* detail služby: popisný štítok */
+  .plate {
+    min-height: 11.5rem;
+    padding: 1.4rem 1.5rem 1.2rem;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--surface);
+  }
+  .plate [data-panel][hidden] {
+    display: none;
+  }
+  h3 {
+    margin-bottom: 0.6rem;
+    font-size: 1.6rem;
+  }
+  .plate p {
+    margin-bottom: 0.6rem;
+  }
+  .note {
+    margin: 0.9rem 0 0;
+    padding-top: 0.8rem;
+    border-top: 1px dashed var(--line);
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 480px) {
+    /* na úzkom displeji sa chránič nezmestí, ostane len päť ističov */
+    .slot--rcd {
+      display: none;
+    }
+    .mods {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+    .tag {
+      padding-inline: 0;
+      font-size: 0.56rem;
+      letter-spacing: -0.01em;
+    }
+    .enclosure {
+      padding: 7px;
+    }
+    .inner {
+      padding-inline: 0.5rem;
+    }
+    .duct,
+    .mods::before {
+      margin-inline: -0.5rem;
+    }
+    .mods::before {
+      left: -0.5rem;
+      right: -0.5rem;
+    }
+  }
+</style>

@@ -1,0 +1,134 @@
+/* Tokeny, reset a typografia. Komponenty majú vlastné scoped štýly. */
+:root {
+  /* predvolený je tmavý režim, svetlý sa zapína cez data-theme="light" */
+  color-scheme: dark;
+
+  --bg: #0f161c;
+  --surface: #17212a;
+  --ink: #e6eaed;
+  --muted: #9aa7b0;
+  --line: #2b3843;
+  --link: #7fb0f0;
+
+  /* signálna žltá je fixná v oboch režimoch, text na nej je vždy tmavý */
+  --signal: #f2c200;
+  --signal-ink: #111c26;
+
+  /* pás s kontaktom */
+  --band: #1c2832;
+  --band-ink: #f2f4f5;
+  --band-muted: #a9b5bd;
+
+  --head: 'IBM Plex Sans Condensed', 'Arial Narrow', Arial, sans-serif;
+  --body: 'IBM Plex Sans', system-ui, Arial, sans-serif;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #e9ecee;
+  --surface: #f7f8f8;
+  --ink: #111c26;
+  --muted: #46535d;
+  --line: #c2c9ce;
+  --link: #1b4f9c;
+
+  --band: #111c26;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 1.0625rem/1.6 var(--body);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--head);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h2 {
+  font-size: clamp(1.75rem, 3.6vw, 2.4rem);
+  margin-bottom: 1rem;
+}
+
+p {
+  margin: 0 0 1rem;
+  max-width: 60ch;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--link);
+  outline-offset: 3px;
+}
+
+.wrap {
+  width: min(1120px, 100% - 2.5rem);
+  margin-inline: auto;
+}
+
+.section {
+  padding: 4.5rem 0;
+  border-top: 1px solid var(--line);
+}
+
+/* Hlavné tlačidlo: pôsobí ako stlačiteľný kláves, hrana sa pri kliku zmenší. */
+.btn {
+  display: inline-block;
+  padding: 1rem 1.6rem;
+  border-radius: 4px;
+  background: var(--signal);
+  color: var(--signal-ink);
+  font: 600 1rem/1 var(--body);
+  text-decoration: none;
+  box-shadow: inset 0 -3px 0 rgba(17, 28, 38, 0.22);
+}
+.btn:hover {
+  background: #ffd21a;
+}
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 -1px 0 rgba(17, 28, 38, 0.22);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
