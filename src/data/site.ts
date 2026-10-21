@@ -9,7 +9,7 @@ export const site = {
   phone: '+421 900 000 000',
   phoneHref: 'tel:+421900000000',
   email: 'meno@priklad.sk',
-  hours: 'Po–So 7:00–19:00, poruchy aj mimo času',
+  hours: 'Po–So 7:00–19:00, poruchy aj mimo pracovného času',
   area: 'Košice vrátane Šace, Barce, Myslavy a Poľova, a obce do 25 km od mesta.',
 } as const;
 

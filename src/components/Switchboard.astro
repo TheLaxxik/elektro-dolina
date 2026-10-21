@@ -22,19 +22,22 @@ import { services } from '../data/site';
           services.map((s, i) => (
             <div class="slot">
               <div class="wires"><span class="wire" style={`background:${s.wire}`}></span></div>
+              <!-- tlačidlo je istič aj štítok pod ním, takže ťuknutie na názov služby funguje -->
               <button
                 type="button"
-                class="mcb"
+                class="pick"
                 data-index={i}
                 aria-pressed={i === 0 ? 'true' : 'false'}
                 aria-controls={`sluzba-${s.id}`}
                 aria-label={s.title}
               >
-                <span class="sw"><span class="lever"></span></span>
-                <span class="rate">{s.rating}</span>
-                <span class="ind"></span>
+                <span class="mcb">
+                  <span class="sw"><span class="lever"></span></span>
+                  <span class="rate">{s.rating}</span>
+                  <span class="ind"></span>
+                </span>
+                <span class="tag">{s.label}</span>
               </button>
-              <span class="tag">{s.label}</span>
             </div>
           ))
         }
@@ -66,6 +69,9 @@ import { services } from '../data/site';
   .board {
     --wire-h: 22px;
     --mcb-h: 118px;
+    /* rozloženie sa riadi šírkou rozvádzača, nie okna: v dvojstĺpcovom hero je
+       rozvádzač užší než na celej šírke, hoci okno je väčšie */
+    container-type: inline-size;
   }
 
   .enclosure {
@@ -89,26 +95,27 @@ import { services } from '../data/site';
   }
 
   .mods {
-    position: relative;
     display: grid;
-    grid-template-columns: 2fr repeat(5, minmax(0, 1fr));
+    grid-template-columns: 1.25fr repeat(5, minmax(0, 1fr));
     gap: 0.4rem;
-  }
-  /* DIN lišta, na ktorej sedia ističe */
-  .mods::before {
-    content: '';
-    position: absolute;
-    left: -0.75rem;
-    right: -0.75rem;
-    top: calc(var(--wire-h) + var(--mcb-h) / 2 - 9px);
-    height: 18px;
-    background: linear-gradient(#a9b0b5, #7d868c 55%, #959da2);
-    border-block: 1px solid #6a737a;
   }
 
   .slot {
     position: relative;
     min-width: 0;
+  }
+  /* DIN lišta, na ktorej sedia ističe. Každý slot kreslí vlastný pás, ktorý
+     presahuje do strán a orezáva ho .inner (overflow: hidden). Lišta tak
+     súvisle prechádza každým radom, aj keď sa ističe zalomia do dvoch riadkov. */
+  .slot::before {
+    content: '';
+    position: absolute;
+    left: -100vw;
+    right: -100vw;
+    top: calc(var(--wire-h) + var(--mcb-h) / 2 - 9px);
+    height: 18px;
+    background: linear-gradient(#a9b0b5, #7d868c 55%, #959da2);
+    border-block: 1px solid #6a737a;
   }
   .wires {
     display: flex;
@@ -120,6 +127,39 @@ import { services } from '../data/site';
     width: 5px;
     height: 100%;
     border-radius: 0 0 1px 1px;
+  }
+
+  /* Tlačidlo je celý slot pod vodičmi: istič aj štítok. Štítok nesie názov
+     služby, preto sa naň dá ťuknúť a nie je menší než ~12 px. */
+  .pick {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: center;
+    cursor: pointer;
+    appearance: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pick:focus-visible {
+    outline: 3px solid #0b3a7a;
+    outline-offset: 3px;
+  }
+  .pick:active .mcb {
+    transform: translateY(1px);
+  }
+  @media (hover: hover) {
+    .pick:hover .mcb,
+    .pick:hover .tag {
+      border-color: #566066;
+    }
   }
 
   .mcb {
@@ -138,20 +178,9 @@ import { services } from '../data/site';
     background: linear-gradient(90deg, #e1e4e6, #f4f5f6 30%, #f4f5f6 70%, #d9dcdf);
     color: #2c353b;
     font: 600 0.62rem/1 var(--body);
-    appearance: none;
   }
   .mcb--rcd {
     width: min(100%, 116px);
-  }
-  button.mcb {
-    cursor: pointer;
-  }
-  button.mcb:hover {
-    border-color: #566066;
-  }
-  button.mcb:focus-visible {
-    outline: 3px solid #0b3a7a;
-    outline-offset: 3px;
   }
 
   /* svorky hore a dole */
@@ -187,7 +216,7 @@ import { services } from '../data/site';
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
     transition: top 0.14s ease-out;
   }
-  .mcb[aria-pressed='true'] .lever,
+  .pick[aria-pressed='true'] .lever,
   .mcb--rcd .lever {
     top: 5%;
   }
@@ -201,7 +230,7 @@ import { services } from '../data/site';
     border-radius: 1px;
     background: #a9afb3;
   }
-  .mcb[aria-pressed='true'] .ind {
+  .pick[aria-pressed='true'] .ind {
     background: #2f9e4f;
   }
   .test {
@@ -212,23 +241,25 @@ import { services } from '../data/site';
     box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.25);
   }
 
-  /* štítok pod ističom, aktívny sa zvýrazní */
+  /* štítok pod ističom, aktívny sa zvýrazní. Minimum 12 px: najdlhšie slovo
+     (Rozvádzače) má pri tejto veľkosti ~67 px, slot musí mať aspoň ~80 px. */
   .tag {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.7em;
+    /* dva riadky textu, aby mali všetky štítky v rade rovnakú výšku */
+    min-height: calc(2.3em + 0.7rem);
     margin-top: 8px;
-    padding: 0.3rem 0.15rem;
+    padding: 0.35rem 0.2rem;
     border: 1px solid #aeb4b8;
     background: #f7f8f8;
     color: #111c26;
-    font: 600 0.68rem/1.15 var(--body);
+    font: 600 0.75rem/1.15 var(--body);
     text-align: center;
     overflow-wrap: anywhere;
     hyphens: auto;
   }
-  .mcb[aria-pressed='true'] + .tag {
+  .pick[aria-pressed='true'] .tag {
     background: var(--signal);
     border-color: #b99700;
   }
@@ -265,18 +296,28 @@ import { services } from '../data/site';
     font-size: 0.95rem;
   }
 
-  @media (max-width: 480px) {
-    /* na úzkom displeji sa chránič nezmestí, ostane len päť ističov */
+  /* Úzky rozvádzač: v jednom rade by sa slová zalamovali v polovici (pod ~600 px
+     má slot menej než ~80 px). Chránič (dekorácia) zmizne a päť ističov sa
+     rozloží 3 + 2, druhý rad na stred. Štítky ostávajú na 12 px. */
+  @container (max-width: 600px) {
     .slot--rcd {
       display: none;
     }
     .mods {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      row-gap: 1rem;
+    }
+    .slot {
+      grid-column: span 2;
+    }
+    .slot:nth-last-child(2) {
+      grid-column: 2 / span 2;
+    }
+    .slot:last-child {
+      grid-column: 4 / span 2;
     }
     .tag {
-      padding-inline: 0;
-      font-size: 0.56rem;
-      letter-spacing: -0.01em;
+      padding-inline: 0.1rem;
     }
     .enclosure {
       padding: 7px;
@@ -284,13 +325,8 @@ import { services } from '../data/site';
     .inner {
       padding-inline: 0.5rem;
     }
-    .duct,
-    .mods::before {
+    .duct {
       margin-inline: -0.5rem;
-    }
-    .mods::before {
-      left: -0.5rem;
-      right: -0.5rem;
     }
   }
 </style>

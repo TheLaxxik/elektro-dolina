@@ -7,6 +7,7 @@ import { site, prepare } from '../data/site';
     <div>
       <h2>Zavolajte alebo napíšte SMS</h2>
       <a class="phone" href={site.phoneHref}>{site.phone}</a>
+      <p class="hours">{site.hours}</p>
       <p class="mail"><a href={`mailto:${site.email}`}>{site.email}</a></p>
       <p>V správe uveďte, čo treba spraviť, kde a kedy vám to vyhovuje. Ozveme sa v ten istý deň.</p>
     </div>
@@ -47,6 +48,9 @@ import { site, prepare } from '../data/site';
     text-decoration: underline;
     text-underline-offset: 0.12em;
   }
+  .hours {
+    margin-bottom: 0.75rem;
+  }
   .mail {
     margin-bottom: 1.5rem;
     font-size: 1.15rem;
@@ -54,6 +58,7 @@ import { site, prepare } from '../data/site';
   p {
     color: var(--band-muted);
   }
+  .hours,
   .mail,
   .mail a {
     color: var(--band-ink);
