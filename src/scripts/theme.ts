@@ -1,15 +1,15 @@
 export {};
 
-// Prepínač režimov. Predvolený je tmavý (bez atribútu data-theme),
+// Prepínač režimov. Predvolený je svetlý (bez atribútu data-theme),
 // voľbu si pamätáme v localStorage. Ak je úložisko zablokované, prepínač
 // funguje, len sa voľba po obnovení stránky nezachová.
 const root = document.documentElement;
 const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
 
-const isLight = () => root.dataset.theme === 'light';
+const isDark = () => root.dataset.theme === 'dark';
 
 const syncLabel = () => {
-  button?.setAttribute('aria-label', isLight() ? 'Prepnúť na tmavý režim' : 'Prepnúť na svetlý režim');
+  button?.setAttribute('aria-label', isDark() ? 'Prepnúť na svetlý režim' : 'Prepnúť na tmavý režim');
 };
 
 // Prechod zapíname len na chvíľu pri kliku, nie trvalo. Pri "znížený pohyb"
@@ -23,9 +23,10 @@ const animateSwitch = () => {
 };
 
 button?.addEventListener('click', () => {
-  const next = isLight() ? 'dark' : 'light';
+  const next = isDark() ? 'light' : 'dark';
   animateSwitch();
-  root.dataset.theme = next;
+  if (next === 'dark') root.dataset.theme = 'dark';
+  else delete root.dataset.theme;
   try {
     localStorage.setItem('theme', next);
   } catch {

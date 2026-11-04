@@ -72,6 +72,15 @@ export const services: Service[] = [
   },
 ];
 
+// Rohová pečiatka výkresu v hero: najdôležitejšie fakty na jeden pohľad.
+export const facts = [
+  { label: 'Obhliadka', value: 'zadarmo' },
+  { label: 'Cena', value: 'písomne vopred' },
+  { label: 'Oblasť', value: 'Košice + 25 km' },
+  { label: 'Pracujeme', value: 'Po–So 7:00–19:00' },
+  { label: 'Poruchy', value: 'aj mimo pracovného času' },
+];
+
 export const steps = [
   { title: 'Obhliadka', text: 'Prídeme, pozrieme stav a opýtame sa, čo potrebujete. Bez poplatku.' },
   { title: 'Cenová ponuka', text: 'Dostanete cenu písomne. Ak sa rozsah nezmení, nezmení sa ani cena.' },
