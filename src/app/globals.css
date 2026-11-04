@@ -1,0 +1,290 @@
+@import "tailwindcss";
+
+/*
+  Elektro Dolina — tokeny
+  ink/graphite: tmavé plochy (hero, pohotovosť, pätička)
+  paper/white:  svetlé plochy obsahu
+  volt:         IBA logo, primárne CTA a focus ring — nikdy pozadie sekcie
+  live:         IBA stavová bodka „technik voľný“
+*/
+@theme {
+  --color-ink: #111210;
+  --color-graphite: #1c1d1a;
+  --color-steel: #63665f;
+  --color-fog: #a3a69f;
+  --color-line: #d8d9d3;
+  --color-line-dark: #2e302b;
+  --color-paper: #f1f2ee;
+  --color-volt: #ffd400;
+  --color-volt-press: #e6bf00;
+  --color-live: #3ddc84;
+
+  --font-display: var(--font-barlow-condensed), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-barlow), system-ui, sans-serif;
+
+  --radius-sm: 2px;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  caret-color: var(--color-ink);
+}
+
+/* Povrchy prehliadača z palety */
+html {
+  scrollbar-color: var(--color-steel) var(--color-paper);
+}
+
+::selection {
+  background: var(--color-ink);
+  color: #fff;
+}
+
+.bg-ink ::selection,
+.bg-graphite ::selection {
+  background: #fff;
+  color: var(--color-ink);
+}
+
+a {
+  text-underline-offset: 0.25em;
+  text-decoration-thickness: 1px;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-volt);
+  outline-offset: 3px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Obrysové číslo (roky v hero) */
+.outline-num {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgb(255 255 255 / 0.55);
+}
+
+/* ───────────── Motion ─────────────
+   Hlavný moment: „zapnutie“ hero ako štartujúca žiarivka.
+   Všetko je v predvolenom stave viditeľné; animácie len prichádzajú
+   z počiatočného stavu (fill-mode: backwards). */
+
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  interpolate-size: allow-keywords;
+}
+
+/* Tmavá vrstva nad fotkou: dvakrát jemne blikne (max. 2 záblesky, nízky kontrast) a zhasne */
+@keyframes power-on {
+  0%,
+  38% {
+    opacity: 0.9;
+  }
+  44% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  58% {
+    opacity: 0.4;
+  }
+  64% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Riadok nadpisu sa vysunie spoza masky */
+@keyframes line-rise {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(0.35em);
+  }
+  to {
+    clip-path: inset(0 0 -0.2em 0);
+    transform: none;
+  }
+}
+
+/* „DOLINA“ — prúd prebehne zľava doprava */
+@keyframes current-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Odchodová tabuľa — preklopenie riadku */
+@keyframes flap {
+  from {
+    transform: rotateX(-88deg);
+    opacity: 0.2;
+  }
+}
+
+/* Potvrdenie formulára */
+@keyframes pop-in {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+/* Hodnota v čipe sa „rozsvieti“ */
+@keyframes glow-in {
+  from {
+    opacity: 0;
+    text-shadow: 0 0 14px rgb(255 255 255 / 0.9);
+  }
+}
+
+.power-overlay {
+  opacity: 0;
+  animation: power-on 1100ms ease-out backwards;
+  pointer-events: none;
+}
+
+.hero-line {
+  display: block;
+  animation: line-rise 760ms var(--ease-out) backwards;
+}
+
+.hero-wipe {
+  animation: current-wipe 1100ms cubic-bezier(0.65, 0, 0.35, 1) 650ms backwards;
+}
+
+.enter {
+  animation: fade-up 560ms var(--ease-out) backwards;
+}
+
+.enter-soft {
+  animation: fade-in 700ms ease-out backwards;
+}
+
+.notice-in {
+  animation: fade-up 240ms var(--ease-out);
+}
+
+.pop-in {
+  animation: pop-in 420ms var(--ease-out) backwards;
+}
+
+.glow-in {
+  animation: glow-in 600ms ease-out;
+}
+
+/* Tabuľa: spúšťa ju data-inview z InView (bez JS ostáva statická a viditeľná) */
+.board tbody {
+  perspective: 900px;
+}
+
+.board[data-inview] tbody td {
+  transform-origin: 50% 0;
+  animation: flap 520ms var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * 55ms + 80ms);
+}
+
+/* FAQ: plynulé rozbalenie (progresívne vylepšenie, kde ::details-content existuje) */
+details::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition:
+    block-size 320ms var(--ease-out),
+    content-visibility 320ms allow-discrete;
+}
+
+details[open]::details-content {
+  block-size: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Bez priestorového pohybu a bez blikania; ostáva jemné prelínanie a spätná väzba */
+  .power-overlay {
+    animation: veil-out 500ms ease-out backwards;
+  }
+  .hero-line,
+  .hero-wipe,
+  .enter {
+    animation: fade-in 400ms ease-out backwards;
+  }
+  .board[data-inview] tbody td {
+    animation: fade-in 300ms ease-out backwards;
+    animation-delay: 0ms;
+  }
+  .notice-in,
+  .pop-in {
+    animation: fade-in 200ms ease-out;
+  }
+  .live-dot {
+    animation: none;
+  }
+  details::details-content {
+    transition-duration: 0ms;
+  }
+}
+
+@keyframes veil-out {
+  from {
+    opacity: 0.9;
+  }
+}
+
+@keyframes pulse-live {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(61 220 132 / 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgb(61 220 132 / 0);
+  }
+}
+
+.live-dot {
+  animation: pulse-live 2s ease-out infinite;
+}
